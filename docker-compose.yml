@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  postgres:
+    container_name: db
+    image: postgres:14-alpine
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_USER=test
+      - POSTGRES_DB=test
+    networks:
+      - backend
+
+  app:
+    build: .
+    container_name: backend
+    ports:
+      - 5000:5000
+    volumes:
+      - ./:/app
+
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=test
+      - DB_NAME=test
+      - DB_PASSWD=test
+      - DB_PORT=5432
+
+    networks:
+      - backend
+
+    depends_on:
+      - postgres
+
+networks:
+  backend:
+    driver: bridge
